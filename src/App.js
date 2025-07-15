@@ -257,7 +257,7 @@ const App = () => {
                             required
                             className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ease-in-out
                                         ${darkMode ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' : 'bg-white border-gray-300 text-gray-800 placeholder-gray-400'}`}
-                            placeholder="Manchester"
+                            placeholder="Accra"
                         />
                     </div>
 
