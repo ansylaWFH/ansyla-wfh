@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Optional: Set a default font */
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+/* This ensures the dark class is applied to the root HTML element by React */
+html.dark {
+    /* Tailwind handles most dark mode styles, but this ensures the class is recognized */
+}
