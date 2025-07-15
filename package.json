@@ -1,0 +1,25 @@
+{
+  "name": "ansyla-wfh-application",
+  "version": "1.0.0",
+  "description": "Ansyla WFH Application Form built with React and Tailwind CSS.",
+  "main": "index.js",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "keywords": ["react", "tailwind", "form", "application", "wfh"],
+  "author": "AI Assistant",
+  "license": "ISC",
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.38",
+    "react-scripts": "^5.0.1",
+    "tailwindcss": "^3.4.4"
+  }
+}
