@@ -22,18 +22,9 @@ const App = () => {
     // State for loading indicator during form submission
     const [isLoading, setIsLoading] = useState(false);
 
-    // State for loading indicator during Gemini API call
-    const [isGeneratingSummary, setIsGeneratingSummary] = useState(false);
-
-    // State to store the generated application summary
-    const [applicationSummary, setApplicationSummary] = useState('');
-
-    // State to control the visibility of the summary modal
-    const [showSummaryModal, setShowSummaryModal] = useState(false);
-
     // Effect to update local storage and apply dark mode class to body
     useEffect(() => {
-        localStorage.setItem('darkMode', JSON.stringify(darkMode));
+        localStorage.setItem('darkMode', JSON.parse(darkMode)); // Ensure darkMode is stored as boolean
         if (darkMode) {
             document.documentElement.classList.add('dark');
         } else {
@@ -97,57 +88,6 @@ const App = () => {
     // Toggle dark mode
     const toggleDarkMode = () => {
         setDarkMode(prevMode => !prevMode);
-    };
-
-    // Function to generate application summary using Gemini API
-    const generateSummary = async () => {
-        setIsGeneratingSummary(true);
-        setApplicationSummary(''); // Clear previous summary
-
-        // Construct a detailed prompt for the LLM
-        const prompt = `Generate a concise, professional summary of the following job application details.
-        Focus on key qualifications and suitability for a WFH role.
-        Name: ${formData.name}
-        Email: ${formData.email}
-        Phone: ${formData.phone}
-        Country: ${formData.country}
-        City: ${formData.city}
-        Gender: ${formData.gender}
-        Highest Qualification: ${formData.qualification}
-
-        Please provide a summary that is no more than 150 words.`;
-
-        let chatHistory = [];
-        chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-
-        const payload = { contents: chatHistory };
-        const apiKey = ""; // API key is provided by the Canvas environment
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-        try {
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            const result = await response.json();
-
-            if (result.candidates && result.candidates.length > 0 &&
-                result.candidates[0].content && result.candidates[0].content.parts &&
-                result.candidates[0].content.parts.length > 0) {
-                const text = result.candidates[0].content.parts[0].text;
-                setApplicationSummary(text);
-                setShowSummaryModal(true); // Show the modal with the summary
-            } else {
-                showCustomAlert('Failed to generate summary. Please try again.');
-                console.error('Gemini API response structure unexpected:', result);
-            }
-        } catch (error) {
-            showCustomAlert('Error generating summary. Please check your internet connection.');
-            console.error('Error calling Gemini API:', error);
-        } finally {
-            setIsGeneratingSummary(false);
-        }
     };
 
     // Conditional rendering: show success message if form is submitted
@@ -345,18 +285,6 @@ const App = () => {
                         </select>
                     </div>
 
-                    {/* Generate Summary Button */}
-                    <button
-                        type="button" // Important: type="button" to prevent form submission
-                        onClick={generateSummary}
-                        disabled={isGeneratingSummary || !formData.name || !formData.email || !formData.qualification} // Disable if fields are empty or generating
-                        className={`w-full font-bold py-3 px-4 rounded-lg shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-opacity-75 mt-4
-                                    ${darkMode ? 'bg-purple-700 hover:bg-purple-600 text-white focus:ring-purple-600' : 'bg-purple-600 hover:bg-purple-700 text-white focus:ring-purple-500'}
-                                    ${isGeneratingSummary || !formData.name || !formData.email || !formData.qualification ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    >
-                        {isGeneratingSummary ? 'Generating Summary...' : 'Generate Application Summary ✨'}
-                    </button>
-
                     {/* Submit Button */}
                     <button
                         type="submit"
@@ -369,35 +297,6 @@ const App = () => {
                     </button>
                 </form>
             </div>
-
-            {/* Summary Modal */}
-            {showSummaryModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-                    <div className={`p-8 rounded-xl shadow-2xl w-full max-w-lg transition-colors duration-300 relative
-                                    ${darkMode ? 'bg-gray-800 text-white border-gray-700' : 'bg-white text-gray-800 border-gray-200'}`}>
-                        <button
-                            onClick={() => setShowSummaryModal(false)}
-                            className={`absolute top-4 right-4 p-2 rounded-full text-lg font-bold
-                                        ${darkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-600 hover:bg-gray-100'}`}
-                        >
-                            &times;
-                        </button>
-                        <h3 className={`text-2xl font-bold mb-4
-                                        ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                            Application Summary
-                        </h3>
-                        {applicationSummary ? (
-                            <p className={`${darkMode ? 'text-gray-300' : 'text-gray-700'} whitespace-pre-wrap`}>
-                                {applicationSummary}
-                            </p>
-                        ) : (
-                            <p className={`${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                                No summary generated yet.
-                            </p>
-                        )}
-                    </div>
-                </div>
-            )}
         </div>
     );
 };
